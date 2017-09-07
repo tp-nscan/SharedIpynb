@@ -40,25 +40,38 @@ def MakeRedBlueGridColorer(span_x:int, span_y:int):
         return palette[span_y * int(tup[0]) + int(tup[1])]
     return fRet
 
-def PlotTrvs(tvs:trv.TaggedRowVecs, colorer=None, lblformatter=defaultFormat, figsize=(4,4),
-             markersize:int=10, showLegend=False, tag_extractor=lambda x: x):
-    downTagged = trv.TaggedRowVecs(row_vecs=tvs.row_vecs, tags=[tag_extractor(t) for t in tvs.tags])
+def PlotTrvs(tvs:trv.TaggedRowVecs,
+             proj_matrix:np.matrixlib.defmatrix.matrix=None,
+             tag_extractor=lambda x: x,
+             colorer=None, 
+             lblformatter=defaultFormat, 
+             figsize=(4,4),
+             markersize:int=10, 
+             showLegend=False, 
+             ):
+
+    #extract the vector and tag info needed for the plot
+    if proj_matrix is None:
+        proj_matrix = np.matrix(np.diag([1.] * len(tvs.row_vecs[0])))
+                                
+    downProj = trv.TaggedRowVecs(row_vecs=np.array([(rv * proj_matrix).tolist()[0] for rv in tvs.row_vecs]),
+                                 tags=[tag_extractor(t) for t in tvs.tags])
     ''' plots a TaggedRowVecs struct'''
     plt.figure(figsize=figsize)
     if colorer==None:
-        colorer = MakeTagUniqueColorer(downTagged.tags)
+        colorer = MakeTagUniqueColorer(downProj.tags)
     fcs = []
-    tag_set = set(downTagged.tags)
-    for i, v in enumerate(downTagged.row_vecs):
-        fcs.append(colorer(downTagged.tags[i]))
+    tag_set = set(downProj.tags)
+    for i, v in enumerate(downProj.row_vecs):
+        fcs.append(colorer(downProj.tags[i]))
         plt.plot(v[0], v[1], 'o',
          markersize=markersize,
-         markerfacecolor=colorer(downTagged.tags[i]),
+         markerfacecolor=colorer(downProj.tags[i]),
          markeredgewidth=0,
-         label=firstLabel(tag_set=tag_set, tag=downTagged.tags[i], lblformatter=lblformatter))
+         label=firstLabel(tag_set=tag_set, tag=downProj.tags[i], lblformatter=lblformatter))
     
-    minX = np.min(downTagged.row_vecs[:, [0]])
-    spanX = np.max(downTagged.row_vecs[:, [0]]) - minX
+    minX = np.min(downProj.row_vecs[:, [0]])
+    spanX = np.max(downProj.row_vecs[:, [0]]) - minX
     if showLegend:
         plt.xlim(minX - spanX * 0.1, minX + spanX * 1.6);
         plt.legend(numpoints=1)
@@ -66,7 +79,21 @@ def PlotTrvs(tvs:trv.TaggedRowVecs, colorer=None, lblformatter=defaultFormat, fi
         plt.xlim(minX - spanX * 0.1, minX + spanX * 1.1);
     return fcs
 
-def PlotTrvsGrid(tvs:trv.TaggedRowVecs, span_x:int, span_y:int, figsize=(4,4), markersize=10, showLegend=False, tag_extractor=lambda x: x):
+def PlotTrvsGrid(tvs:trv.TaggedRowVecs,
+                 span_x:int, 
+                 span_y:int, 
+                 proj_matrix:np.matrixlib.defmatrix.matrix=None, 
+                 tag_extractor=lambda x: x,
+                 figsize=(4,4), 
+                 markersize=10, 
+                 showLegend=False):
     ''' plots a TaggedNVectors struct, where the vectors correspond to points on a lattice'''
     colorer = MakeRedBlueGridColorer(span_x=span_x, span_y=span_y)
-    return PlotTrvs(tvs=tvs, colorer=colorer, lblformatter=Format2Tuple, figsize=figsize, markersize=markersize, showLegend=showLegend)
+    return PlotTrvs(tvs=tvs,
+                    proj_matrix=proj_matrix,
+                    tag_extractor=tag_extractor,
+                    colorer=colorer, 
+                    lblformatter=Format2Tuple, 
+                    figsize=figsize, 
+                    markersize=markersize, 
+                    showLegend=showLegend)

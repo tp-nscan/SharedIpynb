@@ -35,6 +35,10 @@ def randOrthoNormals(d:int=3, count:int=2, seed:int=1234):
     colVecs = np.random.randn(d, count)
     return gram_schmidt_columns(colVecs)
 
+def randOrthoNormalMatrix(s:int=3):
+    ''' returns a square matrix of size s with orthonormal columns''' 
+    return np.matrix(randOrthoNormals(s,s))
+
 def randnPdefMatrix(dim:int):
     ''' makes a positive definite square matrix of size dim'''
     m = randnMatrix(rows=dim, cols=dim)
