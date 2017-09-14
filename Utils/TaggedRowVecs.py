@@ -78,10 +78,10 @@ def Gaussians(centers:TaggedRowVecs=None,
         covMatrix=np.matrix(np.diag([1.] * dim))                                   
     ''' replaces each of the provided vectors with a gaussian cluster of vectors'''
     return TaggedRowVecs(row_vecs = np.vstack(np.random.multivariate_normal(
-                                        centers.row_vecs[i], 
+                                        rv, 
                                         covMatrix,
                                         num_points) 
-                                  for i in range(len(centers.row_vecs))),
+                                  for rv in centers.row_vecs),
                          tags = [i for t in centers.tags for i in Indexes(root=t, count=num_points)])
     
                                     
@@ -92,13 +92,13 @@ def GaussianTwins(centers:TaggedRowVecs=Single(vec=np.array([1.,2.]), tag='.'),
               num_points2:int=2):
     ''' replaces each of the provided vectors with a pair of gaussian clusters'''
     rv1 = np.vstack(np.random.multivariate_normal(
-                        centers.row_vecs[i], 
+                        rv,
                         covMatrix1,
-                        num_points1) for i in range(len(centers.row_vecs)))
+                        num_points1) for rv in centers.row_vecs)
     rv2 = np.vstack(np.random.multivariate_normal(
-                        centers.row_vecs[i], 
+                        rv, 
                         covMatrix2,
-                        num_points2) for i in range(len(centers.row_vecs)))
+                        num_points2) for rv in centers.row_vecs)
     
     tags1 = [(1, i) for t in centers.tags for i in Indexes(root=t, count=num_points1)]
     tags2 = [(2, i) for t in centers.tags for i in Indexes(root=t, count=num_points2)]
@@ -114,9 +114,9 @@ def d2Lattice(centers:TaggedRowVecs=Single(vec=np.array([1.,2.]), tag='.'),
     ''' replaces each of the provided vectors with a square lattice of vectors'''
     tics1 = span1 * np.linspace(-0.5, 0.5, steps1)[:, np.newaxis]
     tics2 = span2 * np.linspace(-0.5, 0.5, steps2)[:, np.newaxis]
-    return TaggedRowVecs(row_vecs=np.array([c + tics1[x] + tics2[y]
-                                       for x in range(len(tics1))
-                                       for y in range(len(tics2))
+    return TaggedRowVecs(row_vecs=np.array([c + t1 + t2
+                                       for t1 in tics1
+                                       for t2 in tics2
                                        for c in centers.row_vecs]),
                          tags=[i for t in centers.tags for i in Indexes2(root=t, steps1=steps1, steps2=steps2)])
 
@@ -129,10 +129,10 @@ def d3Lattice(centers:TaggedRowVecs=Single(vec=np.array([1., 2., 3.]), tag='.'),
     tics1 = span1 * np.linspace(-0.5, 0.5, steps1)[:, np.newaxis]
     tics2 = span2 * np.linspace(-0.5, 0.5, steps2)[:, np.newaxis]
     tics3 = span3 * np.linspace(-0.5, 0.5, steps3)[:, np.newaxis]
-    return TaggedRowVecs(row_vecs=np.array([c + tics1[x] + tics2[y] + tics3[z]
-                                        for x in range(len(tics1))
-                                        for y in range(len(tics2))
-                                        for z in range(len(tics3))
+    return TaggedRowVecs(row_vecs=np.array([c + t1 + t2 + t3
+                                        for t1 in tics1
+                                        for t2 in tics2
+                                        for t3 in tics3
                                         for c in centers.row_vecs]),
                          tags=[i for t in centers.tags for i in
                                      Indexes3(root=t, steps1=steps1, steps2=steps2, steps3=steps3)])
