@@ -47,8 +47,7 @@ def PlotTrvs(tvs:trv.TaggedRowVecs,
              lblformatter=defaultFormat, 
              figsize=(4,4),
              markersize:int=10, 
-             showLegend=False, 
-             ):
+             showLegend=False):
 
     #extract the vector and tag info needed for the plot
     if proj_matrix is None:

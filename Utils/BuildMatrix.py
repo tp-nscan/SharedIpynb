@@ -40,14 +40,14 @@ def randOrthoNormalMatrix(s:int=3):
     ''' returns a square matrix of size s with orthonormal columns''' 
     return np.matrix(randOrthoNormals(s,s))
 
-def randnPdefMatrix(dim:int, seed:int=None):
-    ''' makes a positive definite square matrix of size dim'''
-    m = randnMatrix(rows=dim, cols=dim, seed=seed)
+def randnPdefMatrix(rows:int=4, cols:int=4, seed:int=None):
+    ''' makes a positive definite square matrix of size rows'''
+    m = randnMatrix(rows=rows, cols=cols, seed=seed)
     return m * np.transpose(m)
 
-def randnPdefUnitMatrix(dim:int, seed:int=None):
-    ''' makes a positive definite square matrix of size dim with unit determinant'''
-    pDef = randnPdefMatrix(dim=dim, seed=seed)
+def randnPdefUnitMatrix(dim:int=4, seed:int=None):
+    ''' makes a positive definite square matrix of size rows with unit determinant'''
+    pDef = randnPdefMatrix(rows=dim, cols=dim, seed=seed)
     dt = np.linalg.det(pDef)
     scale = np.power(dt, 1/dim)
     return pDef / scale

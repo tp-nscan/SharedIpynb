@@ -16,7 +16,7 @@ from sklearn.utils.extmath import _ravel
 
 positions = []
 
-def _gradient_descent_1p8(objective, p0, it, n_iter, objective_error=None,
+def _gd_hist_1p8(objective, p0, it, n_iter, objective_error=None,
                       n_iter_check=1, n_iter_without_progress=50,
                       momentum=0.5, learning_rate=1000.0, min_gain=0.01,
                       min_grad_norm=1e-7, min_error_diff=1e-7, verbose=0,
@@ -141,11 +141,18 @@ def _gradient_descent_1p8(objective, p0, it, n_iter, objective_error=None,
 
     return p, error, i
 
+def getPos():
+    return positions
 
-def wrappedTsne(X:np.ndarray, random_state:int=20150101):
-    #backed_gradient_descent = sklearn.manifold.t_sne._gradient_descent
+def useGd_Hist():
+    positions[:] = []
+    backed_gd = sklearn.manifold.t_sne._gradient_descent
+    sklearn.manifold.t_sne._gradient_descent = _gd_hist_1p8
+    return backed_gd, positions
 
-    #np.dstack(position.reshape(-1, 2) for position in positions)
+def restorGd(gd):
+    sklearn.manifold.t_sne._gradient_descent = gd
     
-    sklearn.manifold.t_sne._gradient_descent = _gradient_descent_1p8
-
+def getHist(pps):
+    return np.dstack(position.reshape(-1, 2) for position in pps)
+    return X_iter
