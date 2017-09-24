@@ -68,11 +68,10 @@ def Indexes3(root=None, steps1:int = 2, steps2:int = 2, steps3:int = 2):
                 current2 += 1
             current1 += 1
 
-            
 def Gaussians(centers:TaggedRowVecs=None, 
               covMatrix=None,
               num_points:int=2,
-              dim:int=None):
+              dim:int=2):
     if centers is None:
         centers=Single(vec=np.array([0.] * dim), tag='.')
         covMatrix=np.matrix(np.diag([1.] * dim))                                   
