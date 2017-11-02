@@ -45,7 +45,7 @@ def MatrixColNorm(matrix):
 
 def randOrthoNormals(d:int=3, count:int=2, seed:int=None):
     ''' makes count orthonormal vectors of length d, uniformly distributed on the d-sphere'''
-    ''' count must be < dim'''   
+    ''' make sure that count < d'''   
     rng = np.random.RandomState(seed)
     colVecs = rng.randn(d, count)
     return gram_schmidt_columns(colVecs)
